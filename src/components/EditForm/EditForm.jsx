@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField } from 'office-ui-fabric-react';
+import { TextField } from '@fluentui/react';
 import { Modal } from '../Modal';
 import { useService } from 'use-service';
 
@@ -19,7 +19,6 @@ export function EditForm(props) {
                         <legend>request</legend>
                         <TextField label="Method" value={req.method} />
                         <TextField label="URL" value={req.url} />
-                        {/* TODO: headers, queryString and cookies */}
                     </fieldset>
                     <fieldset>
                         <legend>response</legend>
@@ -28,7 +27,6 @@ export function EditForm(props) {
                         <TextField label="httpVersion" value={res.httpVersion} />
                         <TextField label="content.size" value={res.content.size} type="number" />
                         <TextField label="mimeType" value={res.content.mimeType} />
-                        {/* TODO: headers, queryString and cookies */}
                     </fieldset>
                 </form>
             <Modal.Footer>Submit</Modal.Footer>

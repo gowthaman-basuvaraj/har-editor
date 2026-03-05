@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { CommandBar } from 'office-ui-fabric-react';
-import { getTheme, registerIcons } from 'office-ui-fabric-react/lib/Styling';
+import { CommandBar } from '@fluentui/react';
+import { getTheme, registerIcons } from '@fluentui/react/lib/Styling';
 
 import './HeaderBar.css';
 
@@ -46,7 +45,7 @@ export function HeaderBar(props) {
             href: 'https://github.com/toutpt/har-editor',
         },
     ];
-    
+
     return (
         <header className="header">
             <CommandBar items={items} farItems={farItems} styles={styles}/>

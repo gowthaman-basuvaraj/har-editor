@@ -1,12 +1,12 @@
 import React from "react";
-import { Stack } from "office-ui-fabric-react/lib/Stack";
+import { Stack } from "@fluentui/react/lib/Stack";
 import {
   DetailsList,
   Selection,
   SelectionMode
-} from "office-ui-fabric-react/lib/DetailsList";
-import { MarqueeSelection } from "office-ui-fabric-react/lib/MarqueeSelection";
-import { DefaultButton } from "office-ui-fabric-react/lib/Button";
+} from "@fluentui/react/lib/DetailsList";
+import { MarqueeSelection } from "@fluentui/react/lib/MarqueeSelection";
+import { DefaultButton } from "@fluentui/react/lib/Button";
 import { useService } from "use-service";
 import { ActionBar } from "../ActionBar/ActionBar";
 import "./Content.css";
@@ -22,8 +22,24 @@ const COLUMNS = [
     isPadded: true,
     isResizable: true,
     isCollapsible: true,
-    // onColumnClick: this._onColumnClick,
     onRender: renderURL,
+  },
+  {
+    key: "domain",
+    name: "Domain",
+    data: "string",
+    maxWidth: 40,
+    isPadded: true,
+    isResizable: true,
+    isCollapsible: true,
+    onRender: item => {
+      try {
+        const url = new URL(item.request.url);
+        return <span title={url.host}>{url.host}</span>;
+      } catch {
+        return <span></span>;
+      }
+    }
   },
   {
     key: "url",
@@ -65,6 +81,59 @@ const COLUMNS = [
     onRender: item => {
       return <span>{item.response.content.mimeType}</span>;
     }
+  },
+  {
+    key: "size",
+    name: "Size",
+    data: "number",
+    maxWidth: 16,
+    isPadded: true,
+    isResizable: true,
+    isCollapsible: true,
+    onRender: item => {
+      const bytes = item.response.content.size || 0;
+      if (bytes < 1024) return <span>{bytes} B</span>;
+      if (bytes < 1024 * 1024) return <span>{(bytes / 1024).toFixed(1)} KB</span>;
+      return <span>{(bytes / (1024 * 1024)).toFixed(1)} MB</span>;
+    }
+  },
+  {
+    key: "time",
+    name: "Time",
+    data: "number",
+    maxWidth: 16,
+    isPadded: true,
+    isResizable: true,
+    isCollapsible: true,
+    onRender: item => {
+      const ms = item.time || 0;
+      if (ms < 1000) return <span>{Math.round(ms)} ms</span>;
+      return <span>{(ms / 1000).toFixed(2)} s</span>;
+    }
+  },
+  {
+    key: "statusText",
+    name: "Status Text",
+    data: "string",
+    maxWidth: 30,
+    isPadded: true,
+    isResizable: true,
+    isCollapsible: true,
+    onRender: item => {
+      return <span>{item.response.statusText}</span>;
+    }
+  },
+  {
+    key: "serverAddress",
+    name: "Server",
+    data: "string",
+    maxWidth: 30,
+    isPadded: true,
+    isResizable: true,
+    isCollapsible: true,
+    onRender: item => {
+      return <span>{item.serverIPAddress || ""}</span>;
+    }
   }
 ];
 
@@ -85,44 +154,35 @@ export function Content(props) {
       <Stack horizontalAlign="baseline" className="content introduction">
         <h1>Welcome to HAR Editor </h1> <h2> What is HAR </h2>
         <p>
-
           HAR stands for HTTP Archive format.It is a JSON based for logging web
           browser interaction on a site.Source:
           <a href="https://en.wikipedia.org/wiki/.har"> Wikipedia </a>.
         </p>
         <h2> Why an editor ? </h2>
         <p>
-
           To help me to create, edit and merge HAR files before use them in har
           - express.
         </p>
         <h2> How to use ? </h2>
         <p>
-
           Start by drop an HAR file in the box on the left and discover all the
           features.
         </p>
         <h2> Some links HAR </h2>
         <ul>
           <li>
-
             <a href="http://www.softwareishard.com/blog/har-12-spec/"> Spec </a>
           </li>
           <li>
-
             <a href="https://github.com/toutpt/har-express"> har - express </a>
           </li>
           <li>
-
             <a href="http://www.softwareishard.com/blog/har-adopters/">
-
               HAR Adopters
             </a>
           </li>
           <li>
-
             <a href="https://toolbox.googleapps.com/apps/har_analyzer/">
-
               HAR Analyser
             </a>
           </li>

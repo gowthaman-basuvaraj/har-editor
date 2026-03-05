@@ -1,7 +1,6 @@
 import React from "react";
-
-import { Modal as ModalBase } from "office-ui-fabric-react/lib/Modal";
-import { getTheme } from 'office-ui-fabric-react/lib/Styling';
+import { Modal as ModalBase } from "@fluentui/react/lib/Modal";
+import { getTheme } from '@fluentui/react/lib/Styling';
 import './Modal.css';
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -20,7 +19,7 @@ export function Modal({ children, onClose, ...props }) {
 
 function ModalHeader(props) {
     return (
-        <div className="modal-header" style={{ 'background-color': theme.palette.themePrimary, color: theme.palette.themeLight }}>
+        <div className="modal-header" style={{ backgroundColor: theme.palette.themePrimary, color: theme.palette.themeLight }}>
             {props.children}
         </div>
     );

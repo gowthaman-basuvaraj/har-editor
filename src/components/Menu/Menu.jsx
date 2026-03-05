@@ -1,7 +1,6 @@
 import React from "react";
-import { Nav, TeachingBubble, Icon } from "office-ui-fabric-react";
-import { Label } from 'office-ui-fabric-react/lib/Label';
-import Dropzone from "react-dropzone";
+import { Nav, TeachingBubble, Icon, Label } from "@fluentui/react";
+import { useDropzone } from "react-dropzone";
 import "./Menu.css";
 import { useService } from "use-service";
 
@@ -28,6 +27,13 @@ export function Menu(props) {
     localStorage.setItem(HELP_KEY, 'true');
     setHideHelp(true);
   }
+
+  const onDrop = React.useCallback((acceptedFiles) => {
+    $har.addFiles(acceptedFiles);
+  }, [$har]);
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+
   const exportedHAR = $har.export();
   const actions = {
     name: 'Actions',
@@ -42,9 +48,6 @@ export function Menu(props) {
         name: f.name,
         onClick: () => $har.select(f)
       };
-      if (f.isValid) {
-      } else {
-      }
       return res;
     })
   };
@@ -66,7 +69,6 @@ export function Menu(props) {
     actions,
   ];
 
-  
   const examplePrimaryButton = {
     children: 'OK got it',
     onClick: dismissHelp
@@ -74,22 +76,24 @@ export function Menu(props) {
   const exampleSecondaryButtonProps = {
     children: 'Learn more',
     href: 'http://www.softwareishard.com/blog/har-12-spec/',
-    
   };
+  const [collapsed, setCollapsed] = React.useState(false);
+
   return (
-    <div className="menu flex">
-      <Nav styles={{ root: { width: 300 } }} groups={navgroups} />
-      <Dropzone onDrop={acceptedFiles => $har.addFiles(acceptedFiles)}>
-        {({ getRootProps, getInputProps }) => (
-          <section className="upload" ref={setEl}>
-            <div {...getRootProps()} className="upload-wrapper">
-              <Label required htmlFor="upload-har">Upload</Label>
-              <input {...getInputProps()} id="upload-har" />
-              <Icon className="ms-Icon" iconName="Upload" />
-            </div>
-          </section>
-        )}
-      </Dropzone>
+    <div className={`menu flex${collapsed ? ' collapsed' : ''}`}>
+      <button className="menu-toggle" onClick={() => setCollapsed(c => !c)} title={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
+        <Icon iconName={collapsed ? "ChevronRight" : "ChevronLeft"} />
+      </button>
+      <div className="menu-content">
+        <Nav styles={{ root: { width: 200 } }} groups={navgroups} />
+        <section className="upload" ref={setEl}>
+          <div {...getRootProps()} className="upload-wrapper">
+            <Label required htmlFor="upload-har">Upload</Label>
+            <input {...getInputProps()} id="upload-har" />
+            <Icon className="ms-Icon" iconName="Upload" />
+          </div>
+        </section>
+      </div>
       {uploadEl && !hideHelp && <TeachingBubble
           target={uploadEl}
           primaryButtonProps={examplePrimaryButton}
