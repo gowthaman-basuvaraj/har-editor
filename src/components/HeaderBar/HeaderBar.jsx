@@ -1,6 +1,7 @@
 import React from 'react';
 import { CommandBar } from '@fluentui/react';
 import { getTheme, registerIcons } from '@fluentui/react/lib/Styling';
+import { useService } from 'use-service';
 
 import './HeaderBar.css';
 
@@ -16,8 +17,29 @@ registerIcons({
     }
 });
 
-export function HeaderBar(props) {
+function download(filename, text) {
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
+
+export function HeaderBar() {
     const theme = getTheme();
+    const $har = useService("$har");
+    const fileInputRef = React.useRef();
+
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            $har.addFiles(files);
+        }
+        e.target.value = '';
+    };
+
     const styles = {
         root: [
             {
@@ -25,29 +47,86 @@ export function HeaderBar(props) {
             }
         ]
     };
+
     const items = [
         {
             key: 'home',
             name: 'HAR Editor',
-            iconProps: {
-                iconName: 'Home',
-            },
+            iconProps: { iconName: 'Home' },
             href: '/har-editor',
         },
+        {
+            key: 'upload',
+            name: 'Open HAR',
+            iconProps: { iconName: 'OpenFile' },
+            onClick: () => fileInputRef.current.click(),
+        },
     ];
+
+    const exportedHAR = $har.export();
+    const hasHARs = $har.files.length > 0;
+
+    if (hasHARs) {
+        if ($har.current) {
+            items.push({
+                key: 'save',
+                name: 'Save',
+                iconProps: { iconName: 'Save' },
+                onClick: () => {
+                    const content = JSON.stringify($har.current.parsed, null, 2);
+                    download($har.current.name, content);
+                },
+            });
+        }
+
+        items.push({
+            key: 'export',
+            name: 'Export All',
+            iconProps: { iconName: 'Download' },
+            onClick: () => {
+                const content = JSON.stringify(exportedHAR);
+                const filename = `har-editor-export-${Date.now()}.har`;
+                download(filename, content);
+            },
+        });
+
+        if ($har.files.length > 1) {
+            items.push({
+                key: 'files',
+                name: $har.current ? $har.current.name : 'Select file',
+                iconProps: { iconName: 'DocumentSet' },
+                subMenuProps: {
+                    items: $har.files.map(f => ({
+                        key: f.name,
+                        text: f.name,
+                        canCheck: true,
+                        checked: $har.current === f,
+                        onClick: () => $har.select(f),
+                    }))
+                }
+            });
+        }
+    }
+
     const farItems = [
         {
             key: 'github',
             name: 'Fork me on github',
-            iconProps: {
-                iconName: 'Github',
-            },
+            iconProps: { iconName: 'Github' },
             href: 'https://github.com/toutpt/har-editor',
         },
     ];
 
     return (
         <header className="header">
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept=".har,.json"
+                multiple
+                style={{ display: 'none' }}
+            />
             <CommandBar items={items} farItems={farItems} styles={styles}/>
         </header>
     );
