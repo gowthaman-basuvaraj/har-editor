@@ -69,6 +69,30 @@ export function $har($apply) {
       return acc;
     }, {});
   };
+  this.filterByMimeTypes = (mimeTypes) => {
+    const logs = this.current.parsed.log;
+    logs.entries = logs.entries.filter(e =>
+      mimeTypes.some(m => (e.response.content.mimeType || "").includes(m))
+    );
+    $apply();
+  };
+  this.filterByStatuses = (statuses) => {
+    const logs = this.current.parsed.log;
+    logs.entries = logs.entries.filter(e => statuses.includes(e.response.status));
+    $apply();
+  };
+  this.filterByDomains = (domains) => {
+    const logs = this.current.parsed.log;
+    logs.entries = logs.entries.filter(e => {
+      try {
+        const host = new URL(e.request.url).host;
+        return domains.includes(host);
+      } catch {
+        return false;
+      }
+    });
+    $apply();
+  };
   this.deleteRows = (rows) => {
     this.current.parsed.log.entries = this.current.parsed.log.entries.filter(r => {
       return rows.indexOf(r) === -1;
