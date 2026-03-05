@@ -25,6 +25,14 @@ function ModalHeader(props) {
     );
 }
 
+function ModalBody(props) {
+    return (
+        <div className="modal-body">
+            {props.children}
+        </div>
+    );
+}
+
 function ModalFooter(props) {
     return (
         <div className="modal-footer">
@@ -33,4 +41,5 @@ function ModalFooter(props) {
     );
 }
 Modal.Header = ModalHeader;
+Modal.Body = ModalBody;
 Modal.Footer = ModalFooter;

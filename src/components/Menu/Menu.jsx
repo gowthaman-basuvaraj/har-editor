@@ -46,6 +46,7 @@ export function Menu(props) {
       const res = {
         key: f.name,
         name: f.name,
+        url: '',
         onClick: () => $har.select(f)
       };
       return res;
@@ -56,6 +57,7 @@ export function Menu(props) {
     actions.links.push({
       key: 'export',
       name: 'Export',
+      url: '',
       onClick: () => {
         var content = JSON.stringify(exportedHAR);
         const filename = `har-editor-export-${Date.now()}.har`;

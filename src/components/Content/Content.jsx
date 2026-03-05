@@ -6,7 +6,7 @@ import {
   SelectionMode
 } from "@fluentui/react/lib/DetailsList";
 import { MarqueeSelection } from "@fluentui/react/lib/MarqueeSelection";
-import { DefaultButton } from "@fluentui/react/lib/Button";
+import { DefaultButton, PrimaryButton } from "@fluentui/react/lib/Button";
 import { useService } from "use-service";
 import { ActionBar } from "../ActionBar/ActionBar";
 import "./Content.css";
@@ -139,6 +139,7 @@ const COLUMNS = [
 
 export function Content(props) {
   const $har = useService("$har");
+  const $edit = useService("$edit");
   const [invoked, setInvoked] = React.useState();
   const [selected, setSelected] = React.useState([]);
   const [selection] = React.useState(
@@ -213,8 +214,11 @@ export function Content(props) {
           <Modal.Header>
             <h4>{invoked.request.method}: {invoked.request.url}</h4>
           </Modal.Header>
-          <pre className="pre">{JSON.stringify(invoked, null, 2)}</pre>
+          <Modal.Body>
+            <pre className="pre">{JSON.stringify(invoked, null, 2)}</pre>
+          </Modal.Body>
           <Modal.Footer>
+            <PrimaryButton onClick={() => { $edit.edit(invoked); setInvoked(false); }} text="Edit" style={{ marginLeft: 8 }} />
             <DefaultButton onClick={() => setInvoked(false)} text="Close" />
           </Modal.Footer>
         </Modal>
