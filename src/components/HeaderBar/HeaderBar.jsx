@@ -53,7 +53,7 @@ export function HeaderBar() {
             key: 'home',
             name: 'HAR Editor',
             iconProps: { iconName: 'Home' },
-            href: '/har-editor',
+            href: '/har-editor/',
         },
         {
             key: 'upload',

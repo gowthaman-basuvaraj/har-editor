@@ -81,6 +81,11 @@ export function $har($apply) {
     logs.entries = logs.entries.filter(e => statuses.includes(e.response.status));
     $apply();
   };
+  this.filterByMethods = (methods) => {
+    const logs = this.current.parsed.log;
+    logs.entries = logs.entries.filter(e => methods.includes(e.request.method));
+    $apply();
+  };
   this.filterByDomains = (domains) => {
     const logs = this.current.parsed.log;
     logs.entries = logs.entries.filter(e => {

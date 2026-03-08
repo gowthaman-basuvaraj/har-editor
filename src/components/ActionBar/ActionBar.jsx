@@ -19,6 +19,7 @@ export function ActionBar(props) {
   const [checkedFilters, setCheckedFilters] = React.useState({});
   const [checkedDomains, setCheckedDomains] = React.useState({});
   const [checkedStatuses, setCheckedStatuses] = React.useState({});
+  const [checkedMethods, setCheckedMethods] = React.useState({});
 
   const toggleFilter = (key) => {
     setCheckedFilters(prev => ({ ...prev, [key]: !prev[key] }));
@@ -167,6 +168,53 @@ export function ActionBar(props) {
           iconProps: { iconName: "CheckMark" },
           disabled: !hasStatusChecked,
           onClick: applyStatusFilter
+        }
+      ]
+    }
+  });
+
+  const methods = [...new Set(
+    logs.entries.map(e => e.request.method)
+  )].sort();
+
+  const toggleMethod = (method) => {
+    setCheckedMethods(prev => ({ ...prev, [method]: !prev[method] }));
+  };
+
+  const applyMethodFilter = () => {
+    const selectedMethods = methods.filter(m => checkedMethods[m]);
+    if (selectedMethods.length > 0) {
+      $har.filterByMethods(selectedMethods);
+      setCheckedMethods({});
+    }
+  };
+
+  const hasMethodChecked = Object.values(checkedMethods).some(Boolean);
+
+  commands.push({
+    key: "filter-by-method",
+    name: "Keep methods...",
+    iconProps: { iconName: "Send" },
+    subMenuProps: {
+      shouldFocusOnMount: true,
+      items: [
+        ...methods.map(m => ({
+          key: `method-${m}`,
+          text: m,
+          canCheck: true,
+          checked: !!checkedMethods[m],
+          onClick: (ev) => {
+            ev?.preventDefault();
+            toggleMethod(m);
+          }
+        })),
+        { key: "method-divider", itemType: 1 },
+        {
+          key: "apply-method-filter",
+          text: "Apply",
+          iconProps: { iconName: "CheckMark" },
+          disabled: !hasMethodChecked,
+          onClick: applyMethodFilter
         }
       ]
     }
